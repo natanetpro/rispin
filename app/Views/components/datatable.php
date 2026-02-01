@@ -54,15 +54,15 @@ $showHeader = $showHeader ?? false;
 </div>
 
 <script>
-    let <?= $jsVar ?>;
-    
+    // let <?= $jsVar ?>; // Removed local declaration
+
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof $ === 'undefined') {
             console.error('jQuery is not loaded. Please ensure it is included before this script.');
             return;
         }
 
-        <?= $jsVar ?> = $('#<?= $tableId ?>').DataTable({
+        window.<?= $jsVar ?> = $('#<?= $tableId ?>').DataTable({
             processing: true,
             serverSide: true,
             ajax: '<?= $url ?>',
@@ -82,30 +82,29 @@ $showHeader = $showHeader ?? false;
         // Handle sidebar toggle resize
         $(document).on('click', '#menu-mini-button, #menu-expend-button', function() {
             setTimeout(function() {
-                if (<?= $jsVar ?>) {
-                    <?= $jsVar ?>.columns.adjust().responsive.recalc();
+                if (window.<?= $jsVar ?>) {
+                    window.<?= $jsVar ?>.columns.adjust().responsive.recalc();
                 }
             }, 350);
         });
 
         // Handle window resize
         $(window).on('resize', function() {
-            if (<?= $jsVar ?>) {
-                <?= $jsVar ?>.columns.adjust();
+            if (window.<?= $jsVar ?>) {
+                window.<?= $jsVar ?>.columns.adjust();
             }
         });
     });
 
     function reloadTable_<?= $jsVar ?>() {
-        if (typeof <?= $jsVar ?> !== 'undefined') {
-            <?= $jsVar ?>.ajax.reload();
+        if (window.<?= $jsVar ?>) {
+            window.<?= $jsVar ?>.ajax.reload(null, false);
         } else {
             console.warn('Table not initialized yet');
         }
     }
     
-    // Fallback for older code calling reloadTable_tableRole directly if tableId matches
-    <?php if ($tableId === 'tableRole'): ?>
-    window.reloadTable_tableRole = reloadTable_<?= $jsVar ?>;
-    <?php endif; ?>
+    // Generic Fallback: Create alias reloadTable_{tableId} matching the exact HTML ID
+    // This allows external scripts to call window['reloadTable_myTable'] directly
+    window['reloadTable_<?= str_replace('-', '_', $tableId) ?>'] = reloadTable_<?= $jsVar ?>;
 </script>

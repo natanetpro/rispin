@@ -57,24 +57,21 @@
 
 <?= $this->section('scripts') ?>
 <script>
+// 1. Siapkan Variabel Global
+var RoleApp;
+
 $(document).ready(() => {
-    const RoleApp = new RispinCRUD({
+    // 2. Init CRUD (Auto-Detect ID dari URL: .../role -> tableRole, modalRole, roleForm)
+    RoleApp = new RispinCRUD({
         baseUrl: '<?= base_url('konfigurasi/role') ?>',
-        tableId: 'tableRole',
-        modalId: 'modalRole',
-        formId: 'roleForm',
-        title: 'Role',
-        csrfTokenName: '<?= csrf_token() ?>',
-        csrfCookieName: '<?= config('Security')->cookieName ?>',
-        onEditInfo: (data) => {
+        
+        // Mapping Data ke Form
+        onEdit: (data) => {
             $('#id').val(data.id);
             $('#role_name').val(data.name);
             $('#description').val(data.description);
         }
     });
-
-    // Expose Global Functions for Buttons (onclick="RoleApp.add()")
-    window.RoleApp = RoleApp;
 });
 </script>
 <?= $this->endSection() ?>

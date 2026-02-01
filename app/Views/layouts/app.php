@@ -284,13 +284,21 @@
     <!--! END: Theme Customizer !-->
     
     <!--! BEGIN: Custom Scripts !-->
+    <script>
+        const RISPIN_CONFIG = {
+            csrfTokenName: '<?= csrf_token() ?>',
+            csrfCookieName: '<?= config('Security')->cookieName ?>'
+        };
+    </script>
     <script src="<?= base_url('assets/js/rispin-crud.js') ?>"></script>
     <script>
         $(document).ready(function() {
-            $('.select2').select2({
-                theme: 'bootstrap-5',
-                placeholder: 'Select an option'
-            });
+            if ($.fn.select2) {
+                $('.select2').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Select an option'
+                });
+            }
         });
     </script>
     <!--! END: Custom Scripts !-->

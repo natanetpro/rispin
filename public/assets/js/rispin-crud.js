@@ -1,252 +1,167 @@
 /**
- * RispinCRUD Helper Class
- * Menyederhanakan proses CRUD AJAX dengan standard CodeIgniter 4 & Myth Auth
+ * RispinCRUD - Simple & Clean Version
  */
-
 class RispinCRUD {
-  constructor(config) {
-    // Konfigurasi Standar
-    this.baseUrl = config.baseUrl;
-    this.tableId = config.tableId;
-    this.modalId = config.modalId;
-    this.formId = config.formId;
-    this.title = config.title || "Data";
+    constructor(config) {
+        // 1. Auto-Detect Nama Entity dari URL (misal: '.../role' -> 'Role')
+        const urlParts = config.baseUrl.split('/');
+        const entity = urlParts[urlParts.length - 1]; // "role"
+        const Entity = entity.charAt(0).toUpperCase() + entity.slice(1); // "Role"
 
-    // Config CSRF (Default mengikuti CodeIgniter)
-    this.csrfTokenName = config.csrfTokenName || "csrf_test_name";
-    this.csrfCookieName = config.csrfCookieName || "csrf_cookie_name";
+        // 2. Setup Config Pintar (Convention over Configuration)
+        Object.assign(this, {
+            title: Entity, // Default: "Role"
+            
+            // Auto Tebak ID HTML (Convention: tableRole, modalRole, roleForm)
+            tableId: `table${Entity}`, 
+            modalId: `modal${Entity}`,
+            formId: `${entity}Form`,
+            
+            // Auto CSRF (Ambil dari Global Variable Layout)
+            csrfTokenName: (typeof RISPIN_CONFIG !== 'undefined') ? RISPIN_CONFIG.csrfTokenName : 'csrf_test_name', 
+            csrfCookieName: (typeof RISPIN_CONFIG !== 'undefined') ? RISPIN_CONFIG.csrfCookieName : 'csrf_cookie_name',
+            
+            // Handlers
+            onEdit: null, // Jika null, akan pakai Auto-Map
+            onView: null
+        }, config);
 
-    // Callbacks untuk Custom Logic
-    this.onEditInfo = config.onEditInfo || function (data) {}; // Function untuk isi form saat edit
-    this.onViewInfo = config.onViewInfo || null; // Function untuk isi form saat view
-    this.onSuccess = config.onSuccess || null;
+        // 3. Init Elemen
+        this.modal = new bootstrap.Modal(document.getElementById(this.modalId));
+        this.form = $(`#${this.formId}`);
+        this.init();
+    }
 
-    // Internal
-    this.modal = new bootstrap.Modal(document.getElementById(this.modalId));
-    this.form = $(`#${this.formId}`);
-    this.saveUrl = "";
+    init() {
+        // 2. Setup Event Listeners (Save & Table Buttons)
+        $('#btnSave').off('click').on('click', (e) => { e.preventDefault(); this.save(); });
 
-    // Initialize
-    this.init();
-  }
+        const self = this;
+        $(document)
+            .off('click', '.btn-edit, .btn-view, .btn-delete') // Hapus listener lama biar ga double
+            .on('click', '.btn-edit',   function() { self.edit($(this).data('id')); })
+            .on('click', '.btn-view',   function() { self.view($(this).data('id')); })
+            .on('click', '.btn-delete', function() { self.delete($(this).data('id')); });
+        
+        console.log(`RispinCRUD Ready: ${this.title}`);
+    }
 
-  // Helper: Ambil Cookie CSRF
-  getCookie(name) {
-    let matches = document.cookie.match(
-      new RegExp(
-        "(?:^|; )" +
-          name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-          "=([^;]*)",
-      ),
-    );
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-  }
+    // 3. Helper Pintar untuk Reset Form & Modal
+    reset(state = 'Form') {
+        this.form[0].reset();
+        this.form.find('.is-invalid').removeClass('is-invalid');
+        this.form.find('input, textarea, select').prop('disabled', state === 'View'); // Disable input jika View
+        $('#btnSave').toggle(state !== 'View'); // Sembunyikan tombol save jika View
+        $(`#${this.modalId}Label`).text(`${state} ${this.title}`);
+    }
 
-  // Initialize Events
-  init() {
-    console.log(`RispinCRUD Initialized for ${this.title}`);
-
-    // Save Button (Gunakan .off() untuk mencegah duplicate binding)
-    $("#btnSave")
-      .off("click")
-      .on("click", (e) => {
-        e.preventDefault();
-        this.save();
-      });
-
-    // Delegated Events untuk Tombol di Tabel (Edit, View, Delete)
-    const self = this;
-    $(document)
-      .off("click", ".btn-edit")
-      .on("click", ".btn-edit", function () {
-        self.edit($(this).data("id"));
-      });
-
-    $(document)
-      .off("click", ".btn-view")
-      .on("click", ".btn-view", function () {
-        self.view($(this).data("id"));
-      });
-
-    $(document)
-      .off("click", ".btn-delete")
-      .on("click", ".btn-delete", function () {
-        self.delete($(this).data("id"));
-      });
-  }
-
-  // Reset Form
-  reset() {
-    this.form[0].reset();
-    this.form.find(".is-invalid").removeClass("is-invalid");
-    this.form.find("input, textarea, select").prop("disabled", false);
-    $("#btnSave").show();
-    $(`#${this.modalId}Label`).text(`${this.title} Form`);
-  }
-
-  // Open Modal Add
-  add() {
-    this.reset();
-    this.saveUrl = this.baseUrl + "/create";
-    $(`#${this.modalId}Label`).text(`Add ${this.title}`);
-    this.modal.show();
-  }
-
-  // Open Modal Edit
-  edit(id) {
-    this.reset();
-    this.saveUrl = this.baseUrl + "/update/" + id;
-    $(`#${this.modalId}Label`).text(`Edit ${this.title}`);
-    this.fetch(id, "edit");
-  }
-
-  // Open Modal View
-  view(id) {
-    this.reset();
-    $(`#${this.modalId}Label`).text(`View ${this.title}`);
-    this.form.find("input, textarea, select").prop("disabled", true);
-    $("#btnSave").hide();
-    this.fetch(id, "view");
-  }
-
-  // Fetch Data from Server
-  fetch(id, mode) {
-    $.get(this.baseUrl + "/show/" + id, (res) => {
-      if (res.status === "success") {
-        if (mode === "edit") this.onEditInfo(res.data);
-        if (mode === "view") {
-          // Jika onViewInfo ada, pakai itu. Jika tidak, fallback ke onEditInfo.
-          if (this.onViewInfo) {
-            this.onViewInfo(res.data);
-          } else {
-            this.onEditInfo(res.data);
-          }
-        }
+    add() {
+        this.reset('Add');
+        this.saveUrl = `${this.baseUrl}/create`;
         this.modal.show();
-      } else {
-        Swal.fire("Error", res.message || "Data not found", "error");
-      }
-    }).fail(() => {
-      Swal.fire("Error", "Failed to fetch data", "error");
-    });
-  }
-
-  // Reload Datatable (Supports multiple naming conventions)
-  reloadTable() {
-    // Coba cari function reload standard
-    let fnName = "reloadTable_" + this.tableId;
-    if (typeof window[fnName] === "function") {
-      window[fnName]();
-      return;
     }
 
-    // Coba cari function reload yang digenerate helper (biasanya ada underscore extra/convert dash)
-    let jsVar = "table_" + this.tableId.replace(/-/g, "_");
-    let fnName2 = "reloadTable_" + jsVar;
-    if (typeof window[fnName2] === "function") {
-      window[fnName2]();
-      return;
+    edit(id) {
+        this.reset('Edit');
+        this.saveUrl = `${this.baseUrl}/update/${id}`;
+        this.fetch(id, 'edit');
     }
 
-    console.warn(`Cannot find reload function for table ${this.tableId}`);
-  }
+    view(id) {
+        this.reset('View');
+        this.fetch(id, 'view');
+    }
 
-  // Save Data (Create/Update)
-  save() {
-    // Ambil CSRF Token terbaru
-    let csrfToken = this.getCookie(this.csrfCookieName) || "";
-    let formData = new FormData(this.form[0]);
-    formData.append(this.csrfTokenName, csrfToken);
+    // 4. Ambil Data dari Server
+    fetch(id, mode) {
+        $.get(`${this.baseUrl}/show/${id}`, (res) => {
+            if (res.status !== 'success') return Swal.fire('Error', res.message || 'Not Found', 'error');
 
-    $.ajax({
-      url: this.saveUrl,
-      type: "POST",
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: (res) => {
-        if (res.status === "success") {
-          this.modal.hide();
-          this.reloadTable();
-          Swal.fire("Success", res.message, "success");
-          if (this.onSuccess) this.onSuccess(res);
-        } else {
-          this.showErrors(res.errors);
-        }
-      },
-      error: (xhr) => {
-        let msg = "Server Error";
-        if (xhr.responseJSON && xhr.responseJSON.message)
-          msg = xhr.responseJSON.message;
-        Swal.fire("Error", msg, "error");
-      },
-    });
-  }
+            if (mode === 'view' && this.onView) {
+                this.onView(res.data);
+            } else if (this.onEdit) {
+                this.onEdit(res.data);
+            } else {
+                // Auto Map Feature: Isi input yang ID-nya sama dengan key database
+                Object.keys(res.data).forEach(key => {
+                    let input = $(`#${key}`);
+                    if (input.length) input.val(res.data[key]);
+                });
+            }
+            
+            this.modal.show();
+        }).fail(() => Swal.fire('Error', 'Connection Failed', 'error'));
+    }
 
-  // Delete Data
-  delete(id) {
-    if (!id) return Swal.fire("Error", "Invalid ID", "error");
+    // 5. Simpan Data (Create/Update)
+    save() {
+        let formData = new FormData(this.form[0]);
+        formData.append(this.csrfTokenName, this.getCookie(this.csrfCookieName) || '');
 
-    Swal.fire({
-      title: `Delete ${this.title}?`,
-      text: "This action cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed || result.value === true) {
-        try {
-          let csrfToken = this.getCookie(this.csrfCookieName) || "";
-          let data = { _method: "DELETE" };
-          data[this.csrfTokenName] = csrfToken;
-
-          $.ajax({
-            url: this.baseUrl + "/delete/" + id,
-            type: "POST",
-            data: data,
+        $.ajax({
+            url: this.saveUrl, type: 'POST', data: formData,
+            processData: false, contentType: false,
             success: (res) => {
-              if (res.status === "success") {
-                this.reloadTable();
-                Swal.fire("Deleted!", res.message, "success");
-              } else {
-                Swal.fire(
-                  "Failed!",
-                  res.message || "Could not delete data",
-                  "error",
-                );
-              }
+                if (res.status === 'success') {
+                    this.modal.hide();
+                    this.reloadTable();
+                    Swal.fire('Success', res.message, 'success');
+                } else if (res.errors) {
+                    this.showErrors(res.errors);
+                } else {
+                    Swal.fire('Error', res.message || 'Operation failed', 'error');
+                }
             },
             error: (xhr) => {
-              let msg = "Unknown Error";
-              if (xhr.responseJSON && xhr.responseJSON.message)
-                msg = xhr.responseJSON.message;
-              else if (xhr.statusText) msg = xhr.statusText;
-              Swal.fire("Error!", msg, "error");
-            },
-          });
-        } catch (err) {
-          console.error("Delete error:", err);
-          Swal.fire("Error", "An unexpected error occurred", "error");
-        }
-      }
-    });
-  }
-
-  // Show Validation Errors
-  showErrors(errors) {
-    if (!errors) return Swal.fire("Error", "Validation failed", "error");
-    // Clear old errors
-    this.form.find(".is-invalid").removeClass("is-invalid");
-    this.form.find(".invalid-feedback").text("");
-
-    // Show new errors
-    for (let key in errors) {
-      $(`#${key}`)
-        .addClass("is-invalid")
-        .siblings(".invalid-feedback")
-        .text(errors[key]);
+                const res = xhr.responseJSON;
+                if (xhr.status === 400 && res && res.errors) {
+                    // Handle Validation Error (HTTP 400)
+                    this.showErrors(res.errors);
+                } else {
+                    // Handle System Error
+                    Swal.fire('Error', res?.message || 'Server Error', 'error');
+                }
+            }
+        });
     }
-  }
+
+    // 6. Hapus Data
+    delete(id) {
+        if (!id) return;
+        Swal.fire({
+            title: `Delete ${this.title}?`, text: "Irreversible action!", icon: 'warning',
+            showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, delete!'
+        }).then((result) => {
+            if (!result.isConfirmed && result.value !== true) return;
+            
+            $.ajax({
+                url: `${this.baseUrl}/delete/${id}`, type: 'POST',
+                data: { _method: 'DELETE', [this.csrfTokenName]: this.getCookie(this.csrfCookieName) },
+                success: (res) => {
+                    if (res.status === 'success') { this.reloadTable(); Swal.fire('Deleted!', res.message, 'success'); }
+                    else Swal.fire('Failed!', res.message, 'error');
+                },
+                error: (xhr) => Swal.fire('Error', xhr.responseJSON?.message || 'Delete Failed', 'error')
+            });
+        });
+    }
+
+    // Utilities
+    reloadTable() {
+        const fn = window[`reloadTable_${this.tableId}`] || window[`reloadTable_table_${this.tableId.replace(/-/g, '_')}`];
+        if (fn) fn();
+    }
+
+    showErrors(errors) {
+        if (!errors) return;
+        this.form.find('.is-invalid').removeClass('is-invalid');
+        for (let key in errors) {
+            $(`#${key}`).addClass('is-invalid').siblings('.invalid-feedback').text(errors[key]);
+        }
+    }
+
+    getCookie(name) {
+        let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+    }
 }
