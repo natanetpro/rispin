@@ -58,7 +58,7 @@ class AuthController extends BaseController
         $remember = (bool) $this->request->getPost('remember');
 
         // Try to log them in...
-        if (! $this->auth->attempt(['email' => $login, 'password' => $password], $remember)) {
+        if (! $this->auth->attempt(['username' => $login, 'password' => $password], $remember)) {
             return redirect()->back()->withInput()->with('error', $this->auth->error() ?? 'Invalid login credentials.');
         }
 
@@ -68,7 +68,11 @@ class AuthController extends BaseController
 
     public function logout()
     {
+        // Logout via Myth:Auth
         $this->auth->logout();
+        
+        // Force destroy session to ensure complete logout
+        session()->destroy();
 
         return redirect()->to('/login')->with('success', 'Logged out successfully.');
     }

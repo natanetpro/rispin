@@ -1,0 +1,167 @@
+/* Custom CSS for Rispin - Premium Table Styling */
+
+/* ===== Card & Layout ===== */
+.main-content .card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== DataTables Wrapper Styling ===== */
+.dataTables_wrapper .row:first-child {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: none; /* Hilangkan border atas */
+  align-items: center;
+}
+
+.dataTables_wrapper .row:last-child {
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #f1f1f4; /* Border halus di bawah */
+  align-items: center;
+}
+
+/* Search Input Styling */
+div.dataTables_wrapper div.dataTables_filter input {
+  margin-left: 0.5em;
+  display: inline-block;
+  width: auto;
+  border: 1px solid #e2e5ec;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  background-color: #fcfcfd;
+}
+
+div.dataTables_wrapper div.dataTables_filter input:focus {
+  border-color: #3454d1;
+  box-shadow: 0 0 0 2px rgba(52, 84, 209, 0.1);
+  outline: none;
+}
+
+/* Length Select Styling */
+div.dataTables_wrapper div.dataTables_length select {
+  border: 1px solid #e2e5ec;
+  border-radius: 6px;
+  padding: 0.4rem 2rem 0.4rem 0.8rem;
+  font-size: 0.875rem;
+  background-color: #fcfcfd;
+}
+
+/* ===== Table Styling ===== */
+.table {
+  margin-bottom: 0 !important;
+  border-color: #f1f1f4;
+}
+
+.table > :not(caption) > * > * {
+  padding: 1rem 1.5rem;
+  border-bottom-color: #f1f1f4;
+  vertical-align: middle;
+}
+
+/* Header Styling - Kunci estetik */
+.table thead th {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top: 1px solid #f1f1f4;
+  border-bottom: 1px solid #f1f1f4 !important; /* Force override */
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+/* Table Body Typography */
+.table tbody td {
+  color: #3e4954;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Action Buttons Styling */
+.table .avatar-text {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin: 0 2px;
+  border: none; /* No border for cleaner look */
+}
+
+/* Soft colors for buttons */
+.table .avatar-text.bg-soft-primary {
+  background-color: rgba(52, 84, 209, 0.1);
+  color: #3454d1;
+}
+.table .avatar-text.bg-soft-primary:hover {
+  background-color: #3454d1;
+  color: #fff;
+}
+
+.table .avatar-text.bg-soft-success {
+  background-color: rgba(23, 198, 102, 0.1);
+  color: #17c666;
+}
+.table .avatar-text.bg-soft-success:hover {
+  background-color: #17c666;
+  color: #fff;
+}
+
+.table .avatar-text.bg-soft-danger {
+  background-color: rgba(234, 77, 77, 0.1);
+  color: #ea4d4d;
+}
+.table .avatar-text.bg-soft-danger:hover {
+  background-color: #ea4d4d;
+  color: #fff;
+}
+
+/* ===== Pagination Styling ===== */
+.page-item.active .page-link {
+  background-color: #3454d1;
+  border-color: #3454d1;
+  box-shadow: 0 4px 10px rgba(52, 84, 209, 0.3);
+  border-radius: 6px;
+}
+
+.page-item .page-link {
+  border: none;
+  color: #6c757d;
+  border-radius: 6px;
+  margin: 0 2px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.page-item .page-link:hover {
+  background-color: #f1f1f4;
+  color: #3454d1;
+}
+
+.page-item.disabled .page-link {
+  background-color: transparent;
+  color: #aeb4be;
+}
+
+/* DataTables Info Text */
+div.dataTables_wrapper div.dataTables_info {
+  padding-top: 0.85em;
+  color: #aeb4be;
+  font-size: 0.875rem;
+}
+
+/* Layout Utilities */
+.nxl-container .table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sidebar Toggle Transition fix */
+.nxl-container .nxl-content .main-content {
+  transition: margin 0.3s ease;
+}

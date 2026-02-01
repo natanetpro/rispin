@@ -8,22 +8,28 @@
     <meta name="description" content="" />
     <meta name="keyword" content="" />
     <meta name="author" content="flexilecode" />
+    <?= csrf_meta() ?>
     <!--! The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags !-->
     <!--! BEGIN: Apps Title-->
     <title>Duralux || Dashboard</title>
     <!--! END:  Apps Title-->
     <!--! BEGIN: Favicon-->
-    <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/favicon.ico') ?>" />
     <!--! END: Favicon-->
     <!--! BEGIN: Bootstrap CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/bootstrap.min.css') ?>" />
     <!--! END: Bootstrap CSS-->
     <!--! BEGIN: Vendors CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css" />
-    <link rel="stylesheet" type="text/css" href="assets/vendors/css/daterangepicker.min.css" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/vendors.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/daterangepicker.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/sweetalert2.min.css') ?>" />
     <!--! END: Vendors CSS-->
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/dataTables.bs5.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/select2.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/select2-theme.min.css') ?>" />
     <!--! BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/css/theme.min.css" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/theme.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/custom.css') ?>" />
     <!--! END: Custom CSS-->
     <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
     <!--! WARNING: Respond.js doesn"t work if you view the page via file: !-->
@@ -49,8 +55,7 @@
 
     <!--! ================================================================ !-->
     <!--! [End] Header !-->
-    <!--! ================================================================ !-->
-    <!--! ================================================================ !-->
+    <!--! =================================0=============================== !-->
     <!--! [Start] Main Content !-->
     <!--! ================================================================ !-->
     <main class="nxl-container">
@@ -252,19 +257,34 @@
     <!--! Footer Script !-->
     <!--! ================================================================ !-->
     <!--! BEGIN: Vendors JS !-->
-    <script src="assets/vendors/js/vendors.min.js"></script>
+    <script src="<?= base_url('assets/vendors/js/vendors.min.js') ?>"></script>
     <!-- vendors.min.js {always must need to be top} -->
-    <script src="assets/vendors/js/daterangepicker.min.js"></script>
-    <script src="assets/vendors/js/apexcharts.min.js"></script>
-    <script src="assets/vendors/js/circle-progress.min.js"></script>
+    <script src="<?= base_url('assets/vendors/js/daterangepicker.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/js/apexcharts.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/js/circle-progress.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/js/sweetalert2.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/js/dataTables.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/js/dataTables.bs5.min.js') ?>"></script>
+    <script>
+        $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="<?= csrf_token() ?>"]').attr('content')
+                }
+            });
+        });
+    </script>
     <!--! END: Vendors JS !-->
     <!--! BEGIN: Apps Init  !-->
-    <script src="assets/js/common-init.min.js"></script>
-    <script src="assets/js/dashboard-init.min.js"></script>
+    <script src="<?= base_url('assets/js/common-init.min.js') ?>"></script>
     <!--! END: Apps Init !-->
     <!--! BEGIN: Theme Customizer  !-->
-    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <script src="<?= base_url('assets/js/theme-customizer-init.min.js') ?>"></script>
     <!--! END: Theme Customizer !-->
+    
+    <!--! BEGIN: Page Specific Scripts !-->
+    <?= $this->renderSection('scripts') ?>
+    <!--! END: Page Specific Scripts !-->
 </body>
 
 </html>

@@ -127,3 +127,6 @@ _modules/*
 
 # Ignore CodeIgniter Session Files
 public/null/ci_session*
+
+# Ignore templates
+app/Views/templates/*

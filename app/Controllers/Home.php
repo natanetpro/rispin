@@ -4,9 +4,15 @@ namespace App\Controllers;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function index()
     {
-        return view('welcome_message');
+        // Check if user is logged in
+        if (service('authentication')->check()) {
+            return redirect()->to('/dashboard');
+        }
+
+        // If not logged in, redirect to login
+        return redirect()->to('/login');
     }
 
     public function dashboard(): string

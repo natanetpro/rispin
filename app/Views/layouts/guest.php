@@ -21,6 +21,7 @@
     <!--! END: Bootstrap CSS-->
     <!--! BEGIN: Vendors CSS-->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/vendors.min.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/css/sweetalert2.min.css') ?>">
     <!--! END: Vendors CSS-->
     <!--! BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/theme.min.css') ?>">
@@ -48,6 +49,7 @@
     <!--! BEGIN: Vendors JS !-->
     <!--! BEGIN: Vendors JS !-->
     <script src="<?= base_url('assets/vendors/js/vendors.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/js/sweetalert2.min.js') ?>"></script>
     <!-- vendors.min.js {always must need to be top} -->
     <!--! END: Vendors JS !-->
     <!--! BEGIN: Apps Init  !-->

@@ -17,50 +17,26 @@
                         <?= csrf_field() ?>
                         
                         <div class="mb-4">
-                            <?= view('components/input', [
-                                'type' => 'email', 
-                                'placeholder' => 'Email Address', 
-                                'value' => old('email'), 
-                                'name' => 'email', 
-                                'extraattribute' => 'required'
-                            ]) ?>
+                            <input type="email" class="form-control" name="email" placeholder="Email Address" value="<?= old('email') ?>" required>
                             <small class="text-danger"><?= session('error.email') ?></small>
                         </div>
                         
                         <div class="mb-4">
-                            <?= view('components/input', [
-                                'type' => 'text', 
-                                'placeholder' => 'Username', 
-                                'value' => old('username'), 
-                                'name' => 'username', 
-                                'extraattribute' => 'required'
-                            ]) ?>
+                            <input type="text" class="form-control" name="username" placeholder="Username" value="<?= old('username') ?>" required>
                             <small class="text-danger"><?= session('error.username') ?></small>
                         </div>
 
                         <div class="mb-4">
-                            <?= view('components/input', [
-                                'type' => 'password', 
-                                'placeholder' => 'Password', 
-                                'value' => '', 
-                                'name' => 'password',
-                                'extraattribute' => 'required autocomplete="new-password"'
-                            ]) ?>
+                            <input type="password" class="form-control" name="password" placeholder="Password" value="" required autocomplete="new-password">
                             <small class="text-danger"><?= session('error.password') ?></small>
                         </div>
 
                         <div class="mb-4">
-                            <?= view('components/input', [
-                                'type' => 'password', 
-                                'placeholder' => 'Repeat Password', 
-                                'value' => '', 
-                                'name' => 'pass_confirm',
-                                'extraattribute' => 'required autocomplete="new-password"'
-                            ]) ?>
+                            <input type="password" class="form-control" name="pass_confirm" placeholder="Repeat Password" value="" required autocomplete="new-password">
                             <small class="text-danger"><?= session('error.pass_confirm') ?></small>
                         </div>
                         
-                        <?= view('components/button', ['text' => 'Register']) ?>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
 
                         <div class="mt-4 text-center">
                             <p class="mb-0">Already have an account? <a href="<?= url_to('login') ?>" class="fw-bold text-primary">Login</a></p>

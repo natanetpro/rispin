@@ -1108,3 +1108,7 @@
             <!-- [ Main Content ] end -->
 
 <?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script src="<?= base_url('assets/js/dashboard-init.min.js') ?>"></script>
+<?= $this->endSection() ?>

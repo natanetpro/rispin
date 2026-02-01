@@ -101,7 +101,6 @@ class Auth extends BaseConfig
      * @var string[]
      */
     public $validFields = [
-        'email',
         'username',
     ];
 

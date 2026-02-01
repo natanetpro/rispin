@@ -2,13 +2,13 @@
 
 namespace App\Cells;
 
-use App\Models\MenuModulModel;
+use App\Models\MenuModel;
 
 class SidebarCell
 {
     public function render()
     {
-        $model = new MenuModulModel();
+        $model = new MenuModel();
         
         $menuTree = $model->getTree();
 

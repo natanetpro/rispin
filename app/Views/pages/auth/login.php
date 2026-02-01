@@ -17,22 +17,10 @@
                         <?= csrf_field() ?>
                         <div class="mb-4">
                             <!-- Note: Changed type to text and name to nama to match DB column and Controller logic -->
-                            <?= view('components/input', [
-                                'type' => 'text', 
-                                'placeholder' => 'Username', 
-                                'value' => '', 
-                                'name' => 'login', 
-                                'extraattribute' => 'required autofocus'
-                            ]) ?>
+                            <input type="text" class="form-control" name="login" placeholder="Username" required autofocus>
                         </div>
                         <div class="mb-3">
-                            <?= view('components/input', [
-                                'type' => 'password', 
-                                'placeholder' => 'Password', 
-                                'value' => '', 
-                                'name' => 'password',
-                                'extraattribute' => 'required'
-                            ]) ?>
+                            <input type="password" class="form-control" name="password" placeholder="Password" required>
                         </div>
                         
                         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -46,7 +34,7 @@
                             <?php endif; ?>
                         </div>
 
-                        <?= view('components/button', ['text' => 'Login']) ?>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
 
                         <?php if ($config->allowRegistration) : ?>
                             <div class="mt-4 text-center">
