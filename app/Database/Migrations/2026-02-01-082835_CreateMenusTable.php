@@ -47,6 +47,12 @@ class CreateMenusTable extends Migration
                 'constraint' => 1,
                 'default'    => 1,
             ],
+            'permission_name' => [ // New Column for Filter
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+                'default'    => null, 
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

@@ -128,14 +128,18 @@ class AuthController extends BaseController
         }
 
         // Save the user
-        $allowedPostFields = array_merge(['password'], $this->authConfig->validFields, $this->authConfig->personalFields);
+        $allowedPostFields = array_merge(['password', 'email'], $this->authConfig->validFields, $this->authConfig->personalFields);
         $user = new User($this->request->getPost($allowedPostFields));
 
         $this->authConfig->requireActivation = null;
         $user->activate();
 
-        if (! $this->auth->register($user)) {
-             return redirect()->back()->withInput()->with('error', $this->auth->error() ?? lang('Auth.unknownError'));
+        if (! empty($this->authConfig->defaultUserGroup)) {
+            $users = $users->withGroup($this->authConfig->defaultUserGroup);
+        }
+
+        if (! $users->save($user)) {
+            return redirect()->back()->withInput()->with('error', $users->errors());
         }
 
         // Success!

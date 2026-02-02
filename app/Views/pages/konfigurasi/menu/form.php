@@ -23,4 +23,17 @@
         <div class="form-text">Check <a href="https://feathericons.com/" target="_blank">Feather Icons</a> for reference</div>
         <div class="invalid-feedback"></div>
     </div>
+
+    <div class="mb-3">
+        <label class="form-label">Permission Requirement (Optional)</label>
+        <select class="form-select form-select2" name="permission_name" id="permission_name" data-parent="#modalMenu">
+            <option value="">-- No Permission Required --</option>
+            <?php if(isset($permissions)): ?>
+                <?php foreach($permissions as $perm): ?>
+                    <option value="<?= $perm['name'] ?>"><?= $perm['name'] ?> (<?= $perm['description'] ?>)</option>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+        <div class="form-text">Menu will be hidden if user doesn't have this permission.</div>
+    </div>
 </form>

@@ -14,12 +14,17 @@
     </div>
     <div class="page-header-right ms-auto">
         <div class="d-flex align-items-center gap-2">
+            <?php if(check_permission('edit_menu')): ?>
             <button class="btn btn-success" id="btnSaveOrder" style="display:none;">
                 <i class="feather-save me-2"></i> Save Order
             </button>
+            <?php endif; ?>
+            
+            <?php if(check_permission('create_menu')): ?>
             <button class="btn btn-primary" onclick="addMenu()">
                 <i class="feather-plus me-2"></i> Add Menu
             </button>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -58,10 +63,14 @@
                                             echo '</div>';
                                         echo '</div>';
                                         
-                                        // 2. ACTION BUTTONS (Diluar Handle -> Aman diklik)
+                                        // 2. ACTION BUTTONS
                                         echo '<div class="dd-actions ms-2">';
-                                            echo '<button class="btn btn-sm btn-light-primary btn-edit me-1" data-id="'.$menu['id'].'"><i class="feather-edit"></i></button>';
-                                            echo '<button class="btn btn-sm btn-light-danger btn-delete" data-id="'.$menu['id'].'"><i class="feather-trash-2"></i></button>';
+                                            if (check_permission('edit_menu')) {
+                                                echo '<button class="btn btn-sm btn-light-primary btn-edit me-1" data-id="'.$menu['id'].'"><i class="feather-edit"></i></button>';
+                                            }
+                                            if (check_permission('delete_menu')) {
+                                                echo '<button class="btn btn-sm btn-light-danger btn-delete" data-id="'.$menu['id'].'"><i class="feather-trash-2"></i></button>';
+                                            }
                                         echo '</div>';
                                         
                                         echo '</div>'; // End Wrapper
@@ -165,6 +174,19 @@ $(document).ready(function() {
     }
 
     // --- 1. MODAL FORM HANDLER ---
+    // --- 0. HELPER: SELECT2 INIT ---
+    function initSelect2() {
+        $('.form-select2').select2({
+            theme: 'bootstrap-5',
+            component: 24, // Opsional rispin component style
+            width: '100%',
+            dropdownParent: $('#modalMenu'), // Fix Select2 focus in Modal
+            placeholder: 'Select an option',
+            allowClear: true
+        });
+    }
+
+    // --- 1. MODAL FORM HANDLER ---
     const modalMenu = new bootstrap.Modal(document.getElementById('modalMenu'));
     const menuForm = $('#menuForm');
 
@@ -176,9 +198,15 @@ $(document).ready(function() {
         $('.is-invalid').removeClass('is-invalid');
         $('.invalid-feedback').removeClass('d-block').text('');
         
+        // Reset Select2
+        $('#permission_name').val(null).trigger('change');
+        
         $('#id').val(''); // Clear ID -> Create Mode
         $('#modalMenuLabel').text('Add Menu');
         modalMenu.show();
+        
+        // Init Select2 after modal logic
+        setTimeout(initSelect2, 200); 
     };
 
     // Edit Menu
@@ -199,8 +227,17 @@ $(document).ready(function() {
                 $('#url').val(data.url);
                 $('#icon').val(data.icon);
                 
+                // Set Value dulu baru Init/Trigger
+                $('#permission_name').val(data.permission_name); 
+
                 $('#modalMenuLabel').text('Edit Menu');
                 modalMenu.show();
+                
+                // Init Select2 dan Trigger Change agar value tampil
+                setTimeout(function(){
+                    initSelect2();
+                    $('#permission_name').trigger('change');
+                }, 200);
             } else {
                 Swal.fire('Error', res.message || 'Menu not found', 'error');
             }

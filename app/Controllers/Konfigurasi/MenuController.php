@@ -22,9 +22,14 @@ class MenuController extends BaseController
         // Untuk view nestable, lebih mudah fetch all ordered by urutan, lalu group by parent di JS atau PHP
         
         $menuItems = $this->menuModel->orderBy('order', 'ASC')->findAll();
+        
+        // Get Permissions List for Dropdown
+        $db = \Config\Database::connect();
+        $permissions = $db->table('auth_permissions')->orderBy('name', 'ASC')->get()->getResultArray();
 
         return view('pages/konfigurasi/menu/index', [
-            'menuItems' => $menuItems
+            'menuItems' => $menuItems,
+            'permissions' => $permissions
         ]);
     }
 
@@ -40,6 +45,7 @@ class MenuController extends BaseController
             'title' => $this->request->getPost('title'),
             'url' => $this->request->getPost('url'),
             'icon' => $this->request->getPost('icon'),
+            'permission_name' => $this->request->getPost('permission_name') ?: null,
             'is_active' => 1,
             'parent_id' => null, // Default root (NULL, not 0)
             'order' => 99 // Taruh paling bawah
@@ -70,7 +76,8 @@ class MenuController extends BaseController
         $data = [
             'title' => $this->request->getPost('title'),
             'url' => $newUrl,
-            'icon' => $this->request->getPost('icon')
+            'icon' => $this->request->getPost('icon'),
+            'permission_name' => $this->request->getPost('permission_name') ?: null
         ];
 
         if (!$this->menuModel->update($id, $data)) {

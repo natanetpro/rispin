@@ -37,6 +37,40 @@
 			<script src="https:oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 			<script src="https:oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
+    <style>
+        /* Fix Select2 Bootstrap 5 Theme Clear Button - SVG Approach */
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__clear {
+            background-color: transparent !important;
+            border: none !important;
+            width: 1.25rem !important; 
+            height: 1.25rem !important;
+            
+            /* Gunakan SVG X yang bersih & pasti muncul */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23a0a5b9'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            background-size: 1rem !important;
+            
+            top: 50% !important;
+            right: 2.25rem !important;
+            transform: translateY(-50%) !important;
+            margin-right: 0 !important;
+            padding: 0 !important;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        /* Hilangkan pseudo-element sebelumnya (jika ada sisa) */
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__clear::before {
+            display: none !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__clear:hover {
+            opacity: 1;
+            /* Merah saat hover */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23dc3545'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -257,6 +291,7 @@
     <!--! Footer Script !-->
     <!--! ================================================================ !-->
     <!--! BEGIN: Vendors JS !-->
+    <script src="<?= base_url('assets/vendors/js/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/vendors/js/vendors.min.js') ?>"></script>
     <!-- vendors.min.js {always must need to be top} -->
     <script src="<?= base_url('assets/vendors/js/daterangepicker.min.js') ?>"></script>

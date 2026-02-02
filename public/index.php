@@ -54,6 +54,13 @@ require FCPATH . '../app/Config/Paths.php';
 $paths = new Paths();
 
 // LOAD THE FRAMEWORK BOOTSTRAP FILE
+// LOAD THE FRAMEWORK BOOTSTRAP FILE
 require $paths->systemDirectory . '/Boot.php';
+
+// --- Fix Myth Auth Compatibility (Entity Class Moved in CI 4.4+) ---
+if (! class_exists('CodeIgniter\Entity') && class_exists('CodeIgniter\Entity\Entity')) {
+    class_alias('CodeIgniter\Entity\Entity', 'CodeIgniter\Entity');
+}
+// ------------------------------------------------------------------
 
 exit(Boot::bootWeb($paths));

@@ -16,7 +16,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <?php if (!isset($hideSubmit) || !$hideSubmit): ?>
-                    <button type="submit" form="<?= $formId ?? 'modalForm' ?>" class="btn btn-primary" id="btnSave">Save</button>
+                    <button type="submit" form="<?= $formId ?? 'modalForm' ?>" class="btn btn-primary" id="<?= $saveBtnId ?? 'btnSave' ?>">Save</button>
                 <?php endif; ?>
             </div>
         </div>

@@ -10,7 +10,7 @@ class MenuModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['parent_id', 'title', 'url', 'icon', 'order', 'is_active'];
+    protected $allowedFields    = ['parent_id', 'title', 'url', 'icon', 'order', 'is_active', 'permission_name'];
 
     // Dates
     protected $useTimestamps = true;
